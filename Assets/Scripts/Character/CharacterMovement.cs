@@ -8,6 +8,7 @@ public class CharacterMovement : MonoBehaviour
     // Classes and Objects
     [SerializeField] private Camera mainCamera;
     [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private MainManager mainManager;
     [SerializeField] private CharacterController playerController;
     [SerializeField] private Transform _groundChecker;
     [SerializeField] private LayerMask Ground;
@@ -81,6 +82,10 @@ public class CharacterMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, rotation, 0f);
             Vector3 move = Quaternion.Euler(0.0f, _targetAngle, 0.0f) * Vector3.forward;
             playerController.Move(move.normalized * Time.deltaTime * speed);
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            mainManager.ReloadScene();
         }
         CheckIsGrounded();
         if (Input.GetButtonDown("Jump"))
