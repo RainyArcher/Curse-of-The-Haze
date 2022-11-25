@@ -7,6 +7,7 @@ public class CharacterMovement : MonoBehaviour
 {
     // Classes and Objects
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private CharacterController playerController;
     [SerializeField] private Transform _groundChecker;
     [SerializeField] private LayerMask Ground;
@@ -42,7 +43,21 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
+        if (dialogueManager.isDialogueActive)
+        {
+            if (Input.GetButtonDown("Continue") || Input.GetButtonDown("Submit"))
+                {
+                    dialogueManager.DisplayNextSentence();
+                }
+            else if (Input.GetButtonDown("Cancel"))
+                {
+                    dialogueManager.EndDialog();
+                }
+        }
+        else
+        {
+            Move();
+        }
     }
     private void Move()
     {
