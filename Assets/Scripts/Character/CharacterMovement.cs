@@ -87,6 +87,15 @@ public class CharacterMovement : MonoBehaviour
         {
             mainManager.ReloadScene();
         }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            dialogueManager.StartDialog(new Dialogue()
+            {
+                name = "Tester",
+                sentences = new string[] { "Hey, I'm an admin",
+                "I am testing this application", "Thanks for listening, bye"}
+            });
+        }
         CheckIsGrounded();
         if (Input.GetButtonDown("Jump"))
         {

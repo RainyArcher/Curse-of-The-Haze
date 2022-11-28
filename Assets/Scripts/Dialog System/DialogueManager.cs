@@ -11,6 +11,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialogueObject;
     public Queue<string> sentences = new Queue<string>();
     public bool isDialogueActive = false;
+    [SerializeField] private float typingSpeed;
 
     void Start()
     {
@@ -18,6 +19,7 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialog(Dialogue dialogue)
     {
+        Time.timeScale = 0;
         isDialogueActive = true;
         dialogueObject.SetActive(isDialogueActive);
         sentences.Clear();
@@ -36,12 +38,24 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         string sentence = sentences.Dequeue();
-        dialogueText.text = sentence;
-        
+        StopAllCoroutines();
+        StartCoroutine(TypeText(sentence));
+
     }
     public void EndDialog()
     {
-        isDialogueActive= false;
+        Time.timeScale = 1;
+        isDialogueActive = false;
         dialogueObject.SetActive(isDialogueActive);
+    }
+
+    IEnumerator TypeText(string text)
+    {
+        dialogueText.text = "";
+        foreach (char letter in text.ToCharArray())
+        {
+            dialogueText.text += letter;
+            yield return new WaitForSecondsRealtime(typingSpeed);
+        }
     }
 }

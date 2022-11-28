@@ -1157,6 +1157,7 @@ MonoBehaviour:
   dialogueText: {fileID: 782452788}
   dialogueObject: {fileID: 717034207}
   isDialogueActive: 0
+  typingSpeed: 0.03
 --- !u!1 &782452786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1710,6 +1711,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21b3cdc8d5ba4754e8cb928733305d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  force: 0
+  sceneIndex: 0
 --- !u!4 &1282778042
 Transform:
   m_ObjectHideFlags: 0
