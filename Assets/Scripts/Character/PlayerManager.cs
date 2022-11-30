@@ -5,16 +5,18 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    private float health;
+    [SerializeField] private float health;
     // maxHealth is a health value that is the highest right now, that can be increased or decreased
-    private float maxHealth;
+    [SerializeField] private float maxHealth;
     // a maximum health value that player can have at the moment by upgrading it is called a healthLimit
     // a healthLimit variable can only be Increased
-    private float healthLimit;
-    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] float healthLimit;
     [SerializeField] private MainManager manager;
     private Vector3 position;
-    public float Health {get => health; set { health = value;} }
+    public float Health {get => health;}
+    public float MaxHealth { get => maxHealth;}
+    public float HealthLimit { get => healthLimit;}
+
     public Vector3 Position { get => position; }
     public List<Curse> curseList;
     void Start()
@@ -26,7 +28,6 @@ public class PlayerManager : MonoBehaviour
     }
     private void Update()
     {
-        healthText.text = $"Health:{health}/{maxHealth}";
         if (health < 0)
         {
             Debug.Log("You died");

@@ -11,8 +11,10 @@ public class MainManager : MonoBehaviour
     public float force;
     public int sceneIndex = 0;
 
+
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         if (Instance != null)
         {
             Destroy(gameObject);
