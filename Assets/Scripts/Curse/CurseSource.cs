@@ -4,24 +4,52 @@ using UnityEngine;
 
 public class CurseSource : MonoBehaviour
 {
-    [SerializeField] private CurseManager manager;
+    private CurseManager manager;
+    [SerializeField] private bool isColliding;
+    [SerializeField] private float timer;
 
     private void Awake()
     {
+        isColliding = false;
+        timer = 3f;
         manager = this.GetComponentInParent<CurseManager>();
+    }
+    private void Update()
+    {
+        if (isColliding)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0f)
+            {
+                timer = 5f;
+                if (manager.isTriggered)
+                {
+                    manager.AddStack();
+                }
+            }
+
+        }
+        else
+        {
+            timer = 5f;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "Player")
         {
-            if (manager.isTriggered) 
-            {
-                manager.AddStack();
-            }
-            else
+            isColliding = true;
+            if (!manager.isTriggered)
             {
                 manager.OnTrigger();
             }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name == "Player")
+        {
+            isColliding = false;
         }
     }
 }

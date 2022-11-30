@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +5,40 @@ using UnityEngine;
 public class CurseManager : MonoBehaviour
 {
     private PlayerManager player;
+    private Transform playerController;
+    [SerializeField] private Transform totem;
     private Curse curse;
     public bool isTriggered;
     private int maxStacks = 3;
+    private float timerForTeleportation;
+    private const float radiusOfTeleportation = 15;
+    private const float radiusOfTriggering = 12;
+    private const float radiusOfTriggeringEsape = 10;
     void Awake()
     {
         player = GameObject.FindObjectOfType<PlayerManager>();
+        playerController = GameObject.Find("Player").GetComponent<Transform>();
+
         isTriggered = false;
+
+    }
+    private void Update()
+    {
+        if (timerForTeleportation > 0)
+        {
+            timerForTeleportation -= Time.deltaTime;
+        }
+        if (isTriggered && (playerController.position - transform.position).magnitude < (float)radiusOfTriggeringEsape && timerForTeleportation <= 0)
+        {
+            timerForTeleportation = 5f;
+            Teleport();
+        }
     }
     public void OnTrigger()
     {
-        isTriggered= true;
+        timerForTeleportation = 5f;
+        isTriggered = true;
+        TeleportTotem();
         curse = new Curse() { stacks = 0, type = "Health" };
         player.curseList.Add(curse);
         DealCurse();
@@ -31,8 +53,9 @@ public class CurseManager : MonoBehaviour
     }
     public void Purify()
     {
-        player.IncreaseMaxHealth(10 * curse.stacks);
-        Destroy(this);
+        player.IncreaseMaxHealth(10 * (curse.stacks + 1));
+        player.curseList.Remove(curse);
+        Destroy(gameObject);
     }
     void OnSourceDestroy()
     {
@@ -47,5 +70,17 @@ public class CurseManager : MonoBehaviour
         {
             player.ReduceMaxHealth(10);
         }
+    }
+    void Teleport()
+    {
+        Vector3 teleportVector = (transform.position - playerController.position).normalized;
+        teleportVector.y = 0f;
+        transform.Translate(teleportVector * (float)Random.Range(4, radiusOfTeleportation));
+    }
+    void TeleportTotem()
+    {
+        Vector3 teleportVector = (transform.position - playerController.position).normalized;
+        teleportVector.y = 0f;
+        totem.transform.Translate(teleportVector * (float)Random.Range(3, radiusOfTriggering));
     }
 }
