@@ -11,9 +11,9 @@ public class CurseManager : MonoBehaviour
     public bool isTriggered;
     private int maxStacks = 3;
     private float timerForTeleportation;
-    private const float radiusOfTeleportation = 15;
-    private const float radiusOfTriggering = 12;
-    private const float radiusOfTriggeringEsape = 10;
+    private const float radiusOfTeleportation = 30;
+    private const float radiusOfTriggering = 26;
+    private const float radiusOfTriggeringEsape = 14;
     void Awake()
     {
         player = GameObject.FindObjectOfType<PlayerManager>();

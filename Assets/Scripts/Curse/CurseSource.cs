@@ -7,11 +7,12 @@ public class CurseSource : MonoBehaviour
     private CurseManager manager;
     [SerializeField] private bool isColliding;
     [SerializeField] private float timer;
+    private const float timerTime = 3f;
 
     private void Awake()
     {
         isColliding = false;
-        timer = 3f;
+        timer = timerTime;
         manager = this.GetComponentInParent<CurseManager>();
     }
     private void Update()
@@ -21,7 +22,7 @@ public class CurseSource : MonoBehaviour
             timer -= Time.deltaTime;
             if (timer <= 0f)
             {
-                timer = 5f;
+                timer = timerTime;
                 if (manager.isTriggered)
                 {
                     manager.AddStack();
@@ -31,7 +32,7 @@ public class CurseSource : MonoBehaviour
         }
         else
         {
-            timer = 5f;
+            timer = timerTime;
         }
     }
     private void OnTriggerEnter(Collider other)

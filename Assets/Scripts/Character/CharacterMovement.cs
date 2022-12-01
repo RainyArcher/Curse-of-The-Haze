@@ -89,6 +89,7 @@ public class CharacterMovement : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
+            Cursor.lockState = CursorLockMode.Confined;
             dialogueManager.StartDialog(new Dialogue()
             {
                 name = "Tester",

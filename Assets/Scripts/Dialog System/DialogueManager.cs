@@ -47,6 +47,7 @@ public class DialogueManager : MonoBehaviour
         Time.timeScale = 1;
         isDialogueActive = false;
         dialogueObject.SetActive(isDialogueActive);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     IEnumerator TypeText(string text)
