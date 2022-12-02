@@ -8,11 +8,11 @@ public class CharacterMovement : MonoBehaviour
     // Classes and Objects
     [SerializeField] private Camera mainCamera;
     [SerializeField] private DialogueManager dialogueManager;
-    [SerializeField] private MainManager mainManager;
     [SerializeField] private CharacterController playerController;
     [SerializeField] private Transform _groundChecker;
     [SerializeField] private LayerMask Ground;
     [SerializeField] private GravityForPlayer gravity;
+    private MainManager mainManager;
 
     // Changable variables
     [Range(0f, 30f)]
@@ -39,7 +39,10 @@ public class CharacterMovement : MonoBehaviour
     public bool isSprinting;
     public bool isJumping;
 
-
+    private void Start()
+    {
+        mainManager = GameObject.FindObjectOfType<MainManager>();
+    }
 
     // Update is called once per frame
     void Update()
