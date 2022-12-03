@@ -26,7 +26,7 @@ public class CharacterMovement : MonoBehaviour
 
     // Constants
     private const float RotationSmoothTime = 0.1f;
-    private const float GroundDistance = 0;
+    private const float GroundDistance = 0.2f;
     
     // Private variables
     private Vector3 _direction;

@@ -11,7 +11,7 @@ public class PlayerManager : MonoBehaviour
     // a maximum health value that player can have at the moment by upgrading it is called a healthLimit
     // a healthLimit variable can only be Increased
     [SerializeField] float healthLimit;
-    [SerializeField] private MainManager manager;
+    private MainManager manager;
     private Vector3 position;
     public float Health {get => health;}
     public float MaxHealth { get => maxHealth;}
@@ -25,6 +25,7 @@ public class PlayerManager : MonoBehaviour
         maxHealth = healthLimit;
         health = healthLimit;
         curseList = new List<Curse>();
+        manager = GameObject.FindObjectOfType<MainManager>();
     }
     private void Update()
     {
