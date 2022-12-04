@@ -9,10 +9,9 @@ using UnityEditor;
 public class MainManager : MonoBehaviour
 {
     public static MainManager Instance;
-    public float force;
+    /*public float force;*/
     public int sceneIndex = 0;
-
-
+    public Vector3 savedPositionData = new Vector3(67.6f, 4.5f, 107.57f);
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -43,5 +42,14 @@ public class MainManager : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+    public void SaveData(Vector3 position)
+    {
+        savedPositionData = position;
+        Debug.Log("Saved");
+    }
+    public Vector3 LoadData()
+    {
+        return savedPositionData;
     }
 }

@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class CharacterMovement : MonoBehaviour
 {
     // Classes and Objects
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip grassWalkingSound;
+    [SerializeField] private AudioClip woodWalkingSound;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private CharacterController playerController;
@@ -27,21 +33,27 @@ public class CharacterMovement : MonoBehaviour
     // Constants
     private const float RotationSmoothTime = 0.1f;
     private const float GroundDistance = 0.2f;
-    
+
     // Private variables
     private Vector3 _direction;
 
     private float speed;
     private float _rotationVelocity;
     private float _targetAngle = 0f;
+
+    // RayCast
+    private RaycastHit hit;
+    [SerializeField] private Vector3 bottomPosition;
     
     public bool isGrounded;
     public bool isSprinting;
     public bool isJumping;
+    public string groundMaterial;
 
-    private void Start()
+    private void Awake()
     {
         mainManager = GameObject.FindObjectOfType<MainManager>();
+        transform.position = mainManager.LoadData();
     }
 
     // Update is called once per frame
@@ -65,6 +77,7 @@ public class CharacterMovement : MonoBehaviour
     }
     private void Move()
     {
+        bottomPosition = _groundChecker.transform.position;
         _direction = Vector3.zero;
         _direction.x = Input.GetAxis("Horizontal");
         _direction.z = Input.GetAxis("Vertical");
@@ -72,10 +85,20 @@ public class CharacterMovement : MonoBehaviour
         if (_direction != Vector3.zero)
         {
             speed = isSprinting ? runningSpeed : walkingSpeed;
+            if (Physics.Raycast(bottomPosition, Vector3.down, out hit, 2))
+            {
+                if ((hit.collider.tag.ToLower() != groundMaterial) && isGrounded && (new string[] { "wood", "grass"}).Contains(hit.collider.tag.ToLower()))
+                {
+                    audioSource.Stop();
+                    groundMaterial = hit.collider.tag.ToLower();
+                }
+            }
+            SetWalkSound();
         }
         else
         {
             speed = 0;
+            audioSource.Stop();
         }
         if (_direction.magnitude >= 0.2f)
         {
@@ -85,6 +108,8 @@ public class CharacterMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, rotation, 0f);
             Vector3 move = Quaternion.Euler(0.0f, _targetAngle, 0.0f) * Vector3.forward;
             playerController.Move(move.normalized * Time.deltaTime * speed);
+            if (!audioSource.isPlaying && isGrounded)
+                audioSource.Play();
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -101,6 +126,10 @@ public class CharacterMovement : MonoBehaviour
             });
         }
         CheckIsGrounded();
+        if (!isGrounded)
+        {
+            audioSource.Stop();
+        }
         if (Input.GetButtonDown("Jump"))
         {
             if (isGrounded || canDoubleJump)
@@ -122,6 +151,25 @@ public class CharacterMovement : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         canDoubleJump = true;
+    }
+    private void SetWalkSound()
+    {
+        if (groundMaterial == "wood")
+        {
+            audioSource.clip = woodWalkingSound;
+        }
+        else if (groundMaterial == "grass")
+        {
+            audioSource.clip = grassWalkingSound;
+        }
+        if (isSprinting)
+        {
+            audioSource.volume = 0.3f;
+        }
+        else
+        {
+            audioSource.volume = 0.05f;
+        }
     }
 
 }
