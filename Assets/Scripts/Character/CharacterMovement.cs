@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,8 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float walkingSpeed;
     [Range(0f, 50f)]
     [SerializeField] private float runningSpeed;
+    [Range(0f, 50f)]
+    [SerializeField] private float dashForce;
 
     [SerializeField] private bool hasDoubleJump;
     [SerializeField] private bool canDoubleJump;
@@ -41,7 +44,11 @@ public class CharacterMovement : MonoBehaviour
     private float _rotationVelocity;
     private float _targetAngle = 0f;
 
-    // RayCast
+    private bool dashButtonPressed;
+    private KeyCode dashButton;
+    private float dashCooldownTime = 2f;
+
+    // RayCasts
     private RaycastHit hit;
     [SerializeField] private Vector3 bottomPosition;
     
@@ -59,6 +66,12 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (dashCooldownTime < 2f)
+        {
+            dashCooldownTime += Time.deltaTime;
+        }
+        else
+            dashCooldownTime = 2f;
         if (dialogueManager.isDialogueActive)
         {
             if (Input.GetButtonDown("Continue") || Input.GetButtonDown("Submit"))
@@ -99,6 +112,47 @@ public class CharacterMovement : MonoBehaviour
         {
             speed = 0;
             audioSource.Stop();
+        }
+        if (dashCooldownTime == 2f) { 
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                dashButton = KeyCode.S;
+                if (dashButtonPressed)
+                {
+                    Dash(dashButton);
+                }
+                else
+                { 
+                    dashButtonPressed = true;
+                    Invoke("TapDelay", 0.25f);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                dashButton = KeyCode.A;
+                if (dashButtonPressed)
+                {
+                    Dash(dashButton);
+                }
+                else
+                {
+                    dashButtonPressed = true;
+                    Invoke("TapDelay", 0.25f);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                dashButton = KeyCode.D;
+                if (dashButtonPressed)
+                {
+                    Dash(dashButton);
+                }
+                else
+                {
+                    dashButtonPressed = true;
+                    Invoke("TapDelay", 0.25f);
+                }
+            }
         }
         if (_direction.magnitude >= 0.2f)
         {
@@ -170,6 +224,23 @@ public class CharacterMovement : MonoBehaviour
         {
             audioSource.volume = 0.05f;
         }
+    }
+    private void TapDelay()
+    {
+        dashButtonPressed = false;
+        dashButton = KeyCode.None;
+    }
+    private void Dash(KeyCode keyCode)
+    {
+        Vector3 direction = Vector3.zero;
+        switch (keyCode)
+        {
+            case KeyCode.A: direction = Vector3.left; break;
+            case KeyCode.S: direction = Vector3.back; break;
+            case KeyCode.D: direction = Vector3.right; break;
+        }
+        playerController.Move(mainCamera.transform.rotation * direction * dashForce);
+        dashCooldownTime = 0f;
     }
 
 }
