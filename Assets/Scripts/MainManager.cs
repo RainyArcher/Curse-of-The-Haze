@@ -8,12 +8,15 @@ using UnityEditor;
 
 public class MainManager : MonoBehaviour
 {
+    private BackgroundMusicManager backgroundMusicManager;
     public static MainManager Instance;
     /*public float force;*/
     public int sceneIndex = 0;
     public Vector3 savedPositionData = new Vector3(67.6f, 4.5f, 107.57f);
+
     private void Awake()
     {
+        backgroundMusicManager = GameObject.FindObjectOfType<BackgroundMusicManager>();
         Cursor.lockState = CursorLockMode.Locked;
         if (Instance != null)
         {
@@ -23,16 +26,15 @@ public class MainManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public void LoadSceneByIndex(int sceneIndex)
-    {
-        SceneManager.LoadScene(sceneIndex);
-    }
     public void LoadNextScene()
     {
+        backgroundMusicManager.clipIndex++;
+        backgroundMusicManager.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     public void ReloadScene()
     {
+        backgroundMusicManager.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void Quit()
