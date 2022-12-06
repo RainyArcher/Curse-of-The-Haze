@@ -47,6 +47,9 @@ public class CharacterMovement : MonoBehaviour
     private bool dashButtonPressed;
     private KeyCode dashButton;
     private float dashCooldownTime = 2f;
+    public float DashCooldownTime { get => dashCooldownTime; }
+    private const float maxDashCooldownTime = 2f;
+    public float MaxDashCooldownTime {get => maxDashCooldownTime;}
 
     // RayCasts
     private RaycastHit hit;
