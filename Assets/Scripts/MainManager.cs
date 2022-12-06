@@ -5,14 +5,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
 using UnityEditor;
+using UnityEditorInternal;
 
 public class MainManager : MonoBehaviour
 {
+    [SerializeField] private Animator transition;
     private BackgroundMusicManager backgroundMusicManager;
     public static MainManager Instance;
     /*public float force;*/
     public int sceneIndex = 0;
     public Vector3 savedPositionData = new Vector3(67.6f, 4.5f, 107.57f);
+    private float transitionTime = 1f;
 
     private void Awake()
     {
@@ -26,16 +29,22 @@ public class MainManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    public IEnumerator LoadScene(int sceneIndex)
+    {
+        transition.SetTrigger("Transition");
+        yield return new WaitForSeconds(transitionTime);
+        SceneManager.LoadScene(sceneIndex);
+    }
     public void LoadNextScene()
     {
         backgroundMusicManager.clipIndex++;
         backgroundMusicManager.Play();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        StartCoroutine(LoadScene(SceneManager.GetActiveScene().buildIndex + 1));
     }
     public void ReloadScene()
     {
         backgroundMusicManager.Play();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartCoroutine(LoadScene(SceneManager.GetActiveScene().buildIndex));
     }
     public void Quit()
     {

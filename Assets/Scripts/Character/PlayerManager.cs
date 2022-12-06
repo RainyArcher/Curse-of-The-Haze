@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerManager : MonoBehaviour
     // a maximum health value that player can have at the moment by upgrading it is called a healthLimit
     // a healthLimit variable can only be Increased
     [SerializeField] float healthLimit;
+    [SerializeField] private TextMeshProUGUI leftEffectText;
+    [SerializeField] private TextMeshProUGUI rightEffectText;
     private MainManager manager;
     private Vector3 position;
     public float Health {get => health;}
@@ -29,6 +32,7 @@ public class PlayerManager : MonoBehaviour
     }
     private void Update()
     {
+        DisplayEffects();
         if (health < 0)
         {
             Debug.Log("You died");
@@ -69,5 +73,35 @@ public class PlayerManager : MonoBehaviour
         float previousMaxHealth = maxHealth;
         maxHealth += ((float)percent / 100) * healthLimit;
         health += (maxHealth - previousMaxHealth);
+    }
+    private void DisplayEffects()
+    {
+        if (curseList.Count == 1)
+        {
+            ClearEffects();
+            DisplayLeftEffect();
+        }
+        else if (curseList.Count == 2)
+        {
+            DisplayLeftEffect();
+            DisplayRightEffect();
+        }
+        else if (curseList.Count == 0)
+        {
+            ClearEffects();
+        }
+    }
+    private void DisplayLeftEffect()
+    {
+        leftEffectText.text = new string('I', curseList[0].stacks + 1);
+    }
+    private void DisplayRightEffect()
+    {
+        rightEffectText.text = new string('I', curseList[1].stacks + 1);
+    }
+    private void ClearEffects()
+    {
+        leftEffectText.text = "";
+        rightEffectText.text = "";
     }
 }

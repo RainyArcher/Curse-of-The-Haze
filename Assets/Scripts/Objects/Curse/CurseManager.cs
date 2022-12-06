@@ -40,6 +40,10 @@ public class CurseManager : MonoBehaviour
         isTriggered = true;
         TeleportTotem();
         curse = new Curse() { stacks = 0, type = "Health" };
+        if (player.curseList.Count == 2)
+        {
+            player.curseList.RemoveAt(0);
+        }
         player.curseList.Add(curse);
         DealCurse();
     }

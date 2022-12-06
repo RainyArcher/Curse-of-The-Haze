@@ -2,10 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -28,6 +25,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float runningSpeed;
     [Range(0f, 50f)]
     [SerializeField] private float dashForce;
+    [SerializeField] private float dashTime;
 
     [SerializeField] private bool hasDoubleJump;
     [SerializeField] private bool canDoubleJump;
@@ -44,6 +42,7 @@ public class CharacterMovement : MonoBehaviour
     private float _rotationVelocity;
     private float _targetAngle = 0f;
 
+    // Dash
     private bool dashButtonPressed;
     private KeyCode dashButton;
     private float dashCooldownTime = 2f;
@@ -122,7 +121,7 @@ public class CharacterMovement : MonoBehaviour
                 dashButton = KeyCode.S;
                 if (dashButtonPressed)
                 {
-                    Dash(dashButton);
+                    StartCoroutine(Dash(dashButton));
                 }
                 else
                 { 
@@ -135,7 +134,7 @@ public class CharacterMovement : MonoBehaviour
                 dashButton = KeyCode.A;
                 if (dashButtonPressed)
                 {
-                    Dash(dashButton);
+                    StartCoroutine(Dash(dashButton));
                 }
                 else
                 {
@@ -148,7 +147,7 @@ public class CharacterMovement : MonoBehaviour
                 dashButton = KeyCode.D;
                 if (dashButtonPressed)
                 {
-                    Dash(dashButton);
+                    StartCoroutine(Dash(dashButton));
                 }
                 else
                 {
@@ -233,17 +232,22 @@ public class CharacterMovement : MonoBehaviour
         dashButtonPressed = false;
         dashButton = KeyCode.None;
     }
-    private void Dash(KeyCode keyCode)
+    private IEnumerator Dash(KeyCode keyCode)
     {
-        Vector3 direction = Vector3.zero;
-        switch (keyCode)
+        float dashStart = Time.time;
+        while (Time.time < dashStart + dashTime) 
         {
-            case KeyCode.A: direction = Vector3.left; break;
-            case KeyCode.S: direction = Vector3.back; break;
-            case KeyCode.D: direction = Vector3.right; break;
+            Vector3 direction = Vector3.zero;
+            switch (keyCode)
+            {
+                case KeyCode.A: direction = Vector3.left; break;
+                case KeyCode.S: direction = Vector3.back; break;
+                case KeyCode.D: direction = Vector3.right; break;
+            }
+            playerController.Move(mainCamera.transform.rotation * direction * dashForce * Time.deltaTime);
+            dashCooldownTime = 0f;
+            yield return null;
         }
-        playerController.Move(mainCamera.transform.rotation * direction * dashForce);
-        dashCooldownTime = 0f;
     }
 
 }

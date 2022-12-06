@@ -1,4 +1,4 @@
-using OpenCover.Framework.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,24 +10,33 @@ public class MainMenuScript : MonoBehaviour
     private MainManager mainManager;
     private int selectedButtonIndex;
     private int buttonCount = 2;
+    private bool isGameStarted;
     [SerializeField] private List<Button> buttons = new List<Button>();
     [SerializeField] private List<Sprite> buttonImages = new List<Sprite>();
 
     private void Start()
     {
+        isGameStarted= false;
         selectedButtonIndex = 0;
         SelectButton();
         mainManager = GameObject.FindObjectOfType<MainManager>();
     }
     public void OnStartButtonClicked()
     {
-        SetButtonSprite(2);
-        mainManager.LoadNextScene();
+        if (!isGameStarted)
+        {
+            isGameStarted = true;
+            SetButtonSprite(2);
+            mainManager.LoadNextScene();
+        }
     }
     public void OnQuitButtonClicked()
     {
-        SetButtonSprite(2);
-        mainManager.Quit();
+        if (!isGameStarted)
+        {
+            SetButtonSprite(2);
+            mainManager.Quit();
+        }
     }
     public void Update()
     {
