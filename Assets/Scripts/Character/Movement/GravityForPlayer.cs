@@ -12,7 +12,8 @@ public class GravityForPlayer : MonoBehaviour
     [Range(0, 100)]
     [SerializeField] private int gravityMultiplier;
     [Range(0.0f, 40.0f)]
-    [SerializeField] private float JumpHeight;
+    [SerializeField] private float jumpHeight;
+    public float JumpHeight { get => jumpHeight; }
 
     // Constants
     private const float Gravity = 9.8f;
@@ -29,6 +30,6 @@ public class GravityForPlayer : MonoBehaviour
     }
     public void Jump()
     {
-        _velocity.y += Mathf.Sqrt(JumpHeight * Gravity * 2);
+        _velocity.y += Mathf.Sqrt(jumpHeight * Gravity * 2);
     }
 }

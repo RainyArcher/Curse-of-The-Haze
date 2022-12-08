@@ -17,6 +17,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private LayerMask Ground;
     [SerializeField] private GravityForPlayer gravity;
     private MainManager mainManager;
+    private QuestManager questManager;
 
     // Changable variables
     [Range(0f, 30f)]
@@ -56,18 +57,41 @@ public class CharacterMovement : MonoBehaviour
     
     public bool isGrounded;
     public bool isSprinting;
-    public bool isJumping;
     public string groundMaterial;
 
     private void Awake()
     {
+        questManager = GameObject.FindObjectOfType<QuestManager>();
         mainManager = GameObject.FindObjectOfType<MainManager>();
-        transform.position = mainManager.LoadData();
+        transform.position = mainManager.savedPositionData;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // quests
+        if (questManager != null)
+        {
+            Quest quest = questManager.villageQuests[questManager.currentQuestIndex];
+            if (quest.id == 0)
+            {
+                if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+                {
+                    questManager.currentStages++;
+                }
+            }
+            else if (quest.id == 1)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                    questManager.currentStages++;
+            }
+            else if (quest.id == 2)
+            {
+                if (GetObjectUnder((int)gravity.JumpHeight) != null)
+                    if (GetObjectUnder((int)gravity.JumpHeight).name.Contains("Garden Bed") && Input.GetKeyDown(KeyCode.Space))
+                        questManager.currentStages++;
+            }
+        }
         if (dashCooldownTime < 2f)
         {
             dashCooldownTime += Time.deltaTime;
@@ -100,9 +124,10 @@ public class CharacterMovement : MonoBehaviour
         if (_direction != Vector3.zero)
         {
             speed = isSprinting ? runningSpeed : walkingSpeed;
-            if (Physics.Raycast(bottomPosition, Vector3.down, out hit, 2))
+            GameObject hitObject = GetObjectUnder(2);
+            if (hitObject != null)
             {
-                if ((hit.collider.tag.ToLower() != groundMaterial) && isGrounded && (new string[] { "wood", "grass"}).Contains(hit.collider.tag.ToLower()))
+                if ((hitObject.tag.ToLower() != groundMaterial) && isGrounded && (new string[] { "wood", "grass" }).Contains(hitObject.tag.ToLower()))
                 {
                     audioSource.Stop();
                     groundMaterial = hit.collider.tag.ToLower();
@@ -186,7 +211,7 @@ public class CharacterMovement : MonoBehaviour
         {
             audioSource.Stop();
         }
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isGrounded || canDoubleJump)
             {
@@ -249,5 +274,15 @@ public class CharacterMovement : MonoBehaviour
             yield return null;
         }
     }
-
+    private GameObject GetObjectUnder(int size)
+    {
+        if (Physics.Raycast(bottomPosition, Vector3.down, out hit, size))
+        {
+            return hit.collider.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }
