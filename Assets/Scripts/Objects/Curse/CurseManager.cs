@@ -36,6 +36,7 @@ public class CurseManager : MonoBehaviour
     }
     public void OnTrigger()
     {
+        totem.gameObject.SetActive(true);
         timerForTeleportation = 5f;
         isTriggered = true;
         TeleportTotem();
