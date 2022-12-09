@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CurseManager : MonoBehaviour
 {
     private PlayerManager player;
     private Transform playerController;
+    [SerializeField] private GameObject pointer;
     [SerializeField] private Transform totem;
     private Curse curse;
     public bool isTriggered;
@@ -36,6 +38,7 @@ public class CurseManager : MonoBehaviour
     }
     public void OnTrigger()
     {
+        pointer.SetActive(true);
         totem.gameObject.SetActive(true);
         timerForTeleportation = 5f;
         isTriggered = true;
