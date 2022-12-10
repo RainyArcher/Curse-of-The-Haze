@@ -19,11 +19,13 @@ public class PlayerManager : MonoBehaviour
     public float Health {get => health;}
     public float MaxHealth { get => maxHealth;}
     public float HealthLimit { get => healthLimit;}
+    public bool isDead;
 
     public Vector3 Position { get => position; }
     public List<Curse> curseList;
     void Start()
     {
+        isDead= false;
         healthLimit = 20f;
         maxHealth = healthLimit;
         health = healthLimit;
@@ -35,37 +37,46 @@ public class PlayerManager : MonoBehaviour
         DisplayEffects();
         if (health < 0)
         {
-            Debug.Log("You died");
-            manager.ReloadScene();
+            isDead = true;
+            manager.OnDeath();
         }
     }
 
     public void DealDamage(float damage, string type = "Points")
     {
-        switch (type)
+        if (!isDead)
         {
-            case "Points":
-                { health -= damage; break; }
-            case "Percent":
-                { health -= damage * health; break; }
+            switch (type)
+            {
+                case "Points":
+                    { health -= damage; break; }
+                case "Percent":
+                    { health -= damage * health; break; }
+            }
         }
     }
     public void DealDamage(int damage, string type = "Points")
     {
-        switch (type)
+        if (!isDead)
         {
-            case "Points":
-                { health -= (float)damage; break; }
-            case "Percent":
-                { health -= (float)damage / 100 * health; break; }
+            switch (type)
+            {
+                case "Points":
+                    { health -= (float)damage; break; }
+                case "Percent":
+                    { health -= (float)damage / 100 * health; break; }
+            }
         }
     }
     public void ReduceMaxHealth(int percent)
     {
-        maxHealth -= ((float)percent / 100) * healthLimit;
-        if (health > maxHealth)
+        if (!isDead)
         {
-            health = maxHealth;
+            maxHealth -= ((float)percent / 100) * healthLimit;
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
         }
     }
     public void IncreaseMaxHealth(int percent) 

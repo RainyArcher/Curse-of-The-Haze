@@ -16,6 +16,14 @@ public class onSavepointTrigger : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (questManager != null)
+        {
+            Quest quest = questManager.villageQuests[questManager.currentQuestIndex];
+            if (quest.id == 3)
+            {
+                questManager.IncrementStages();
+            }
+        }
         if (other.gameObject.name == "Player" && !isUsed)
         {
             isUsed = true;

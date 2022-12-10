@@ -43,6 +43,10 @@ public class QuestManager : MonoBehaviour
             }
         }
     }
+    public void IncrementStages()
+    {
+        currentStages++;
+    }
     void Hide()
     {
         questBar.SetActive(false);

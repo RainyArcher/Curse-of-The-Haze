@@ -9,13 +9,15 @@ using UnityEditor;
 public class MainManager : MonoBehaviour
 {
     [SerializeField] private Animator transition;
+    private GameOverScreen gameOverScreen;
     private BackgroundMusicManager backgroundMusicManager;
+    private float transitionTime = 1f;
+
     public static MainManager Instance;
     /*public float force;*/
     public int sceneIndex = 0;
     public Vector3 savedPositionData = new Vector3(67.6f, 4.5f, 107.57f);
     public int questIndex = 0;
-    private float transitionTime = 1f;
 
     private void Awake()
     {
@@ -43,7 +45,18 @@ public class MainManager : MonoBehaviour
     }
     public void ReloadScene()
     {
+        backgroundMusicManager.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void OnDeath()
+    {
+        backgroundMusicManager.Stop();
+        gameOverScreen = GameObject.FindObjectOfType<GameOverScreen>(true);
+        gameOverScreen.gameObject.SetActive(true);
+        if (Input.GetKey(KeyCode.Space))
+        {
+            ReloadScene();
+        }
     }
     public void Quit()
     {

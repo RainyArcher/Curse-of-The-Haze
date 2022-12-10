@@ -13,6 +13,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private CharacterController playerController;
+    [SerializeField] private PlayerManager playerManager;
     [SerializeField] private Transform _groundChecker;
     [SerializeField] private LayerMask Ground;
     [SerializeField] private GravityForPlayer gravity;
@@ -69,49 +70,56 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // quests
-        if (questManager != null)
+        if (!playerManager.isDead)
         {
-            Quest quest = questManager.villageQuests[questManager.currentQuestIndex];
-            if (quest.id == 0)
+            // quests
+            if (questManager != null)
             {
-                if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+                Quest quest = questManager.villageQuests[questManager.currentQuestIndex];
+                if (quest.id == 0)
                 {
-                    questManager.currentStages++;
+                    if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+                    {
+                        questManager.IncrementStages();
+                    }
+                }
+                else if (quest.id == 1)
+                {
+                    if (Input.GetKeyDown(KeyCode.LeftShift))
+                        questManager.IncrementStages();
+                }
+                else if (quest.id == 2)
+                {
+                    if (GetObjectUnder((int)gravity.JumpHeight) != null)
+                        if (GetObjectUnder((int)gravity.JumpHeight).name.Contains("Garden Bed") && Input.GetKeyDown(KeyCode.Space))
+                            questManager.IncrementStages();
                 }
             }
-            else if (quest.id == 1)
+            if (dashCooldownTime < 2f)
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
-                    questManager.currentStages++;
+                dashCooldownTime += Time.deltaTime;
             }
-            else if (quest.id == 2)
+            else
+                dashCooldownTime = 2f;
+            if (dialogueManager.isDialogueActive)
             {
-                if (GetObjectUnder((int)gravity.JumpHeight) != null)
-                    if (GetObjectUnder((int)gravity.JumpHeight).name.Contains("Garden Bed") && Input.GetKeyDown(KeyCode.Space))
-                        questManager.currentStages++;
-            }
-        }
-        if (dashCooldownTime < 2f)
-        {
-            dashCooldownTime += Time.deltaTime;
-        }
-        else
-            dashCooldownTime = 2f;
-        if (dialogueManager.isDialogueActive)
-        {
-            if (Input.GetButtonDown("Continue") || Input.GetButtonDown("Submit"))
+                if (Input.GetButtonDown("Continue") || Input.GetButtonDown("Submit"))
                 {
                     dialogueManager.DisplayNextSentence();
                 }
-            else if (Input.GetButtonDown("Cancel"))
+                else if (Input.GetButtonDown("Cancel"))
                 {
                     dialogueManager.EndDialog();
                 }
+            }
+            else
+            {
+                Move();
+            }
         }
         else
         {
-            Move();
+            audioSource.Stop();
         }
     }
     private void Move()
@@ -191,20 +199,6 @@ public class CharacterMovement : MonoBehaviour
             playerController.Move(move.normalized * Time.deltaTime * speed);
             if (!audioSource.isPlaying && isGrounded)
                 audioSource.Play();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            mainManager.ReloadScene();
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Cursor.lockState = CursorLockMode.Confined;
-            dialogueManager.StartDialog(new Dialogue()
-            {
-                name = "Tester",
-                sentences = new string[] { "Hey, I'm an admin",
-                "I am testing this application", "Thanks for listening, bye"}
-            });
         }
         CheckIsGrounded();
         if (!isGrounded)

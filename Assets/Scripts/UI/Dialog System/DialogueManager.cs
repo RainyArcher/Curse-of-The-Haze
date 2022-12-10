@@ -21,6 +21,7 @@ public class DialogueManager : MonoBehaviour
     {
         Time.timeScale = 0;
         isDialogueActive = true;
+        Cursor.lockState = CursorLockMode.Confined;
         dialogueObject.SetActive(isDialogueActive);
         sentences.Clear();
         nameText.text = dialogue.name;

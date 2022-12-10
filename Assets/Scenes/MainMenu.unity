@@ -1018,6 +1018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transition: {fileID: 943519791}
+  deathPanel: {fileID: 9170307357561783294, guid: 079b4ba00c84a6148ac7b2c77198abad, type: 3}
   sceneIndex: 0
   savedPositionData: {x: 67.6, y: 4.5, z: 107.57}
   questIndex: 0
