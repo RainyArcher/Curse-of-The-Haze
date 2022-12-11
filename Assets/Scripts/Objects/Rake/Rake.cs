@@ -5,6 +5,7 @@ using UnityEngine;
 public class Rake : MonoBehaviour
 {
     [SerializeField] private Animator rakeAnimator;
+    [SerializeField] private AudioSource audio;
     private PlayerManager playerManager;
     private void OnTriggerEnter(Collider other)
     {
@@ -18,6 +19,7 @@ public class Rake : MonoBehaviour
     }
     IEnumerator AnimationWait()
     {
+        audio.Play();
         yield return new WaitForSeconds(0.4f);
         playerManager.DealDamage(100);
         rakeAnimator.ResetTrigger("Bump");

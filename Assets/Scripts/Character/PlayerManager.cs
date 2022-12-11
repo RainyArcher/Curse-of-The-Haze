@@ -104,11 +104,17 @@ public class PlayerManager : MonoBehaviour
     }
     private void DisplayLeftEffect()
     {
-        leftEffectText.text = new string('I', curseList[0].stacks + 1);
+        if (curseList[0].stacks != 3)
+            leftEffectText.text = new string('I', curseList[0].stacks + 1);
+        else
+            leftEffectText.text = "IV";
     }
     private void DisplayRightEffect()
     {
-        rightEffectText.text = new string('I', curseList[1].stacks + 1);
+        if (curseList[1].stacks != 3)
+            rightEffectText.text = new string('I', curseList[1].stacks + 1);
+        else
+            rightEffectText.text = "IV";
     }
     private void ClearEffects()
     {

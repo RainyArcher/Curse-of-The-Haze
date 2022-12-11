@@ -9,13 +9,18 @@ public class CurseManager : MonoBehaviour
     private Transform playerController;
     [SerializeField] private GameObject pointer;
     [SerializeField] private Transform totem;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip teleportClip;
+    [SerializeField] private AudioClip appleEatingClip;
+    [SerializeField] private AudioClip curseStackClip;
     private Curse curse;
     public bool isTriggered;
     private int maxStacks = 3;
     private float timerForTeleportation;
-    private const float radiusOfTeleportation = 30;
-    private const float radiusOfTriggering = 26;
-    private const float radiusOfTriggeringEsape = 14;
+    private float timerForTeleportationTime = 3.5f;
+    private const int radiusOfTeleportation = 30;
+    private const int radiusOfTriggering = 75;
+    private const int radiusOfTriggeringEsape = 20;
     void Awake()
     {
         player = GameObject.FindObjectOfType<PlayerManager>();
@@ -32,15 +37,16 @@ public class CurseManager : MonoBehaviour
         }
         if (isTriggered && (playerController.position - transform.position).magnitude < (float)radiusOfTriggeringEsape && timerForTeleportation <= 0)
         {
-            timerForTeleportation = 5f;
+            timerForTeleportation = timerForTeleportationTime;
             Teleport();
         }
     }
     public void OnTrigger()
     {
+        audioSource.PlayOneShot(curseStackClip);
         pointer.SetActive(true);
         totem.gameObject.SetActive(true);
-        timerForTeleportation = 5f;
+        timerForTeleportation = timerForTeleportationTime;
         isTriggered = true;
         TeleportTotem();
         curse = new Curse() { stacks = 0, type = "Health" };
@@ -55,15 +61,17 @@ public class CurseManager : MonoBehaviour
     {
         if (curse.stacks < maxStacks)
         {
+            audioSource.PlayOneShot(curseStackClip);
             curse.stacks++;
             DealCurse();
         }
     }
     public void Purify()
     {
+        audioSource.PlayOneShot(appleEatingClip);
         player.IncreaseMaxHealth(10 * (curse.stacks + 1));
         player.curseList.Remove(curse);
-        Destroy(gameObject);
+        Invoke("Destroy", 0.9f);
     }
     void OnSourceDestroy()
     {
@@ -81,14 +89,19 @@ public class CurseManager : MonoBehaviour
     }
     void Teleport()
     {
+        audioSource.PlayOneShot(teleportClip);
         Vector3 teleportVector = (transform.position - playerController.position).normalized;
         teleportVector.y = 0f;
-        transform.Translate(teleportVector * (float)Random.Range(4, radiusOfTeleportation));
+        transform.Translate(teleportVector * (float)Random.Range(20, radiusOfTeleportation * 2));
     }
     void TeleportTotem()
     {
         Vector3 teleportVector = (transform.position - playerController.position).normalized;
         teleportVector.y = 0f;
-        totem.transform.Translate(teleportVector * (float)Random.Range(3, radiusOfTriggering));
+        totem.transform.Translate(teleportVector * (float)Random.Range(30, radiusOfTriggering));
+    }
+    void Destroy()
+    {
+        Destroy(gameObject);
     }
 }
